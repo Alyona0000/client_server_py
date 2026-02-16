@@ -57,14 +57,23 @@ def cmd_vowels(payload: str) -> str:
     vowels = set("aeiouyAEIOUY" "аеиіоуяюєїАЕИІОУЯЮЄЇ")
     return str(sum(1 for ch in payload if ch in vowels))
 
+#################################################################################
 
-# Словник “команда -> функція”.
-# Це зручно: можна легко додати нову команду, просто дописавши функцію і запис тут.
+def cmd_kvodrik(payload: float) -> float:
+    """
+    возводить число в квадрат
+    """
+    kvodrik = int(payload)*int(payload)
+    return kvodrik
+
+######################################################################################
+
 COMMANDS = {
     "PAL": cmd_pal,
     "REV": cmd_rev,
     "WORDS": cmd_words,
     "VOWELS": cmd_vowels,
+    "SQ": cmd_kvodrik,
 }
 
 

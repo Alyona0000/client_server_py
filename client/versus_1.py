@@ -40,7 +40,7 @@ def main() -> None:
     PORT = 20002
 
     # Підказки користувачу (студенту)
-    print("Commands: PAL, REV, WORDS, VOWELS")
+    print("Commands: PAL, REV, WORDS, VOWELS,  SQ")
     print("Format:   COMMAND|text")
     print("Example:  PAL|forof")
     print("Type 'quit' to exit.\n")
