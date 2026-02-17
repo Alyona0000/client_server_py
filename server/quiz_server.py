@@ -220,7 +220,7 @@ def handle_client(conn: socket.socket, addr) -> None:
     """
     print(f"Connected by {addr}")
     buffer = bytearray()  # тут накопичуємо байти, які прийшли по TCP
-
+    session = jkljlkl
     try:
         while True:
             line = recv_line(conn, buffer)
