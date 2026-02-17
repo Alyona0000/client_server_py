@@ -67,6 +67,70 @@ def cmd_kvodrik(payload: float) -> float:
     return kvodrik
 
 ######################################################################################
+#####################################################################################
+#  як на сервері реалізувати квіз тест 
+
+
+
+def cmd_quiz(payload: str) -> str:
+    """
+    Команда QUIZ.
+    payload має вигляд: A,C,B,A,C
+    Повертає результат тесту.
+    """
+    questions = [
+        {
+            "q": "1) 2+3 = ?",
+            "opts": "A)2  B)3  C)5",
+            "a": "C"
+        },
+        {
+            "q": "2) 5*2 = ?",
+            "opts": "A)7  B)10  C)12",
+            "a": "B"
+        },
+        {
+            "q": "3) 9-4 = ?",
+            "opts": "A)3  B)6  C)5",
+            "a": "C"
+        },
+        {
+            "q": "4) 3^2 = ?",
+            "opts": "A)6  B)9  C)3",
+            "a": "B"
+        },
+        {
+            "q": "5) 10/2 = ?",
+            "opts": "A)5  B)2  C)8",
+            "a": "A"
+        }
+    ]
+
+    # Якщо payload пустий — просто показуємо тест
+    if not payload.strip():
+        text = "=== MINI QUIZ ===\n"
+        for q in questions:
+            text += f"{q['q']}\n{q['opts']}\n\n"
+        text += "Відправ відповіді так: QUIZ|A,B,C,A,B"
+        return text
+
+    # Інакше перевіряємо відповіді
+    answers = payload.upper().replace(" ", "").split(",")
+
+    if len(answers) != 5:
+        return "Помилка: потрібно 5 відповідей (наприклад A,B,C,A,B)"
+
+    score = 0
+    for i in range(5):
+        if answers[i] == questions[i]["a"]:
+            score += 1
+
+    return f"Твій результат: {score}/5"
+
+
+
+
+############################################################################################
 
 COMMANDS = {
     "PAL": cmd_pal,
@@ -74,8 +138,8 @@ COMMANDS = {
     "WORDS": cmd_words,
     "VOWELS": cmd_vowels,
     "SQ": cmd_kvodrik,
+    "QUIZ": cmd_quiz,
 }
-
 
 def parse_request_line(line: str) -> tuple[str, str]:
     """
@@ -141,7 +205,8 @@ def send_response(conn: socket.socket, status: str, payload: str) -> None:
         STATUS|payload\n
     де STATUS = "OK" або "ERR".
     """
-    line = f"{status}|{payload}\n"
+    line = f"{status}|{payload}\n<<ENDOFTEXT>>"
+    print(f"Sending response: {line.strip()}")
     conn.sendall(line.encode("utf-8"))  # sendall гарантує відправку всіх байтів
 
 
@@ -169,7 +234,8 @@ def handle_client(conn: socket.socket, addr) -> None:
 
             # Порожній рядок — трактуємо як помилку (можна було б ігнорувати/quit).
             if line == "":
-                send_response(conn, "ERR", "Empty request")
+
+                send_response(conn, "ERR", "Empty request535")
                 continue
 
             try:

@@ -6,7 +6,7 @@
 #
 # Клієнт:
 #  - зчитує команду з консолі
-#  - відправляє рядок на сервер (закінчує '\n' щоб сервер знав, де кінець)
+#  - відправляє рядок на серQUITвер (закінчує '\n' щоб сервер знав, де кінець)
 #  - читає відповідь сервера до '\n'
 #  - друкує відповідь у форматі "OK: ..." або "ERR: ..."
 
@@ -23,7 +23,7 @@ def recv_line(conn: socket.socket, buffer: bytearray) -> str | None:
       - тому накопичуємо buffer і шукаємо '\n'
     """
     while True:
-        nl_index = buffer.find(b"\n")
+        nl_index = buffer.find(b"\n<<ENDOFTEXT>>")
         if nl_index != -1:
             raw_line = buffer[:nl_index]
             del buffer[:nl_index + 1]
@@ -39,7 +39,7 @@ def main() -> None:
     PORT = 20002
 
     # Підказки користувачу (студенту)
-    print("Commands: PAL, REV, WORDS, VOWELS,  SQ")
+    print("Commands: PAL, REV, WORDS, VOWELS,  SQ,  QUIZ")
     print("Format:   COMMAND|text")
     print("Example:  PAL|forof")
     print("Type 'quit' to exit.\n")
