@@ -1,61 +1,40 @@
+# session.py
+
 class LoginSystem:
     def __init__(self):
         self.users = {}
+        self.current_user = None
 
-    def register(self):
-        name = input("-(0_0)-Введіть ім’я: ")
+    def register(self, name: str, age: int, email: str) -> str:
+        name = name.strip()
+        email = email.strip()
 
-        if name in self.users:
-            print("-(0_0)-Ви вже зареєстровані!")
-            self.show_user(name)
-            return
-
-        age = int(input("-(0_0)-Введіть вік: "))
-        email = input("-(0_0)-Введіть email: ")
-
-        self.users[name] = {
-            "age": age,
-            "email": email
-        }
-
-        print("-(0_0)-Реєстрація успішна!")
-
-    def login(self):
-        name = input("-(0_0)-Введіть ім’я для входу: ")
+        if not name:
+            return "Помилка: ім'я порожнє"
 
         if name in self.users:
-            print("-(0_0)-Ласкаво просимо,", name)
-            self.show_user(name)
-        else:
-            print("-(0_0)-Користувача не знайдено.")
+            return "Ви вже зареєстровані!\n" + self.show_user(name)
 
-    def show_user(self, name):
-        user = self.users[name]
-        print("\n-(0_0)- Дані користувача -(0_0)-")
-        print("Ім’я:", name)
-        print("Вік:", user["age"])
-        print("Email:", user["email"])
-        print("------------------------")
+        self.users[name] = {"age": age, "email": email}
+        return "Реєстрація успішна!\n" + self.show_user(name)
 
-    def menu(self):
-        while True:
-            print("\n1 - Реєстрація")
-            print("2 - Вхід")
-            print("3 - Вихід")
+    def login(self, name: str) -> str:
+        name = name.strip()
+        if name not in self.users:
+            return "Вибач, але такого користувача немає. Спочатку REGISTER."
 
-            choice = input("-(0_0)-Оберіть дію: ")
+        self.current_user = name
+        return "Привіт, " + name + "!\n" + self.show_user(name)
 
-            if choice == "1":
-                self.register()
-            elif choice == "2":
-                self.login()
-            elif choice == "3":
-                print("-(0_0)-Добре я спати!")
-                break
-            else:
-                print("-(0_0)-Оберіть дію з меню.")
+    def show_user(self, name: str) -> str:
+        user = self.users.get(name)
+        if not user:
+            return "Немає такого користувача."
 
-
-# запуск
-system = LoginSystem()
-system.menu()
+        return (
+            "-(0_0)- Дані користувача -(0_0)-\n"
+            f"Ім’я: {name}\n"
+            f"Вік: {user['age']}\n"
+            f"Email: {user['email']}\n"
+            "------------------------"
+        )
