@@ -55,6 +55,7 @@ def cmd_quiz(payload: str) -> str:
     return f"Твій результат: {score}/5"
 
 
+
 # --- команди без сесії ---
 COMMANDS = {
     "PAL": cmd_pal,
@@ -66,9 +67,10 @@ COMMANDS = {
 }
 
 def parse_request_line(line: str) -> tuple[str, str]:
-    if "|" not in line:
-        raise ValueError("Expected 'COMMAND|payload' format")
-    command, payload = line.split("|", 1)
+    line = line.strip()
+    if " " not in line:
+        return line.upper(), ""   # payload пустий
+    command, payload = line.split(" ", 1)
     return command.strip().upper(), payload
 
 def recv_line(conn: socket.socket, buffer: bytearray) -> str | None:
@@ -86,13 +88,26 @@ def recv_line(conn: socket.socket, buffer: bytearray) -> str | None:
 
 def send_response(conn: socket.socket, status: str, payload: str) -> None:
     # нормальный протокол: одна строка = один ответ
-    line = f"{status}|{payload}\n<<ENDOFTEXT>>"
-    print(f"<< {line}")
+    line = f"{status}|{payload}\n<<ENDOFTEXT>>\n"
+    #print(f"<< {line}")
     conn.sendall(line.encode("utf-8"))
 
 def handle_client(conn: socket.socket, addr) -> None:
     print(f"Connected by {addr}")
     buffer = bytearray()
+
+    welcome_message = "\n" \
+    "====== [QUIZ SERVER] ======\n" \
+    "Welcome! \n" \
+    "\n" \
+    "Commands:\n" \
+    "  REGISTER|name,age,email\n" \
+    "  LOGIN|name\n" \
+    "\n" \
+    "=========\n"
+
+    send_response(conn, "OK", welcome_message)
+
 
     # ВАЖНО: отдельная сессия на клиента
     session = LoginSystem()
@@ -131,6 +146,19 @@ def handle_client(conn: socket.socket, addr) -> None:
                     # LOGIN|name
                     resp = session.login(payload)
                     send_response(conn, "OK", resp)
+                    continue
+
+
+                if command == "Q":
+                    #питання, квіз
+                    resp = session.as_question(payload)
+                    send_response(conn, "питання:\n", resp)
+                    continue
+
+                if command == "A":
+                    #відповідь на питання
+                    resp = session.ans_question(payload)
+                    send_response(conn, "A, done", resp)
                     continue
 
                 if command == "ME":

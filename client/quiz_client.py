@@ -50,6 +50,10 @@ def main() -> None:
 
         buffer = bytearray()  # буфер для recv_line()
 
+        resp = recv_line(s, buffer)
+        if resp is not None:
+            print(resp)
+
         while True:
             user = input(">>> ").strip()
 
