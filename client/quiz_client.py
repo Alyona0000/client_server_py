@@ -39,11 +39,6 @@ def main() -> None:
     PORT = 20002
 
     # Підказки користувачу (студенту)
-    print("Commands: PAL, REV, WORDS, VOWELS,  SQ,  QUIZ")
-    print("Format:   COMMAND|text")
-    print("Example:  PAL|forof")
-    print("Type 'quit' to exit.\n")
-
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         # connect() встановлює TCP-з'єднання з сервером
         s.connect((HOST, PORT))
